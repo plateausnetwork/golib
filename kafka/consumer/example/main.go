@@ -20,7 +20,7 @@ func main() {
 	}
 	for res := range c.Run() {
 		if res.Error != nil {
-			logger.Error("Response Message ERROR: ", res.Error)
+			logger.Error("MESSAGE ERROR: ", res.Error)
 			continue
 		}
 		logger.Info("MESSAGE: ", res.Message)
