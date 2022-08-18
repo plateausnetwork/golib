@@ -8,7 +8,7 @@ import (
 type (
 	Producer interface {
 		Produce(msg Message) error
-		Responses() chan Delivery
+		Delivery() chan Delivery
 		Flush(timeoutMs int) int
 		Close()
 	}
@@ -40,7 +40,7 @@ func (i producerImpl) Produce(msg Message) error {
 		}, nil)
 }
 
-func (i producerImpl) Responses() chan Delivery {
+func (i producerImpl) Delivery() chan Delivery {
 	return i.delivery
 }
 
@@ -49,6 +49,7 @@ func (i producerImpl) Flush(timeoutMs int) int {
 }
 
 func (i producerImpl) Close() {
+	close(i.delivery)
 	i.kafka.Flush(0)
 	i.kafka.Close()
 }

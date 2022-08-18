@@ -19,25 +19,24 @@ func main() {
 	if err != nil {
 		logger.Error("failed to create producer ", err)
 	}
-	msg, err := getMessage()
+	msg, err := makeExampleMessage()
 	if err != nil {
 		logger.Error("failed to generate msg ", err)
 	}
 	if err = p.Produce(*msg); err != nil {
 		logger.Error("failed to produce msg ", err)
 	}
-	responses := p.Responses()
-	for response := range responses {
-		if response.Error != nil {
-			logger.Error("Response ERROR: ", response.Error)
+	for delivery := range p.Delivery() {
+		if delivery.Error != nil {
+			logger.Error("DELIVERY ERROR: ", delivery.Error)
 			continue
 		}
-		logger.Info(response.TopicPartition)
+		logger.Info("DELIVERY: ", delivery.TopicPartition)
 	}
 	p.Close()
 }
 
-func getMessage() (*producer.Message, error) {
+func makeExampleMessage() (*producer.Message, error) {
 	msgBytes, err := json.Marshal(map[string]string{
 		"name":  "rhz",
 		"email": "contact@rhizom.me",
