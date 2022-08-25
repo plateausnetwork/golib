@@ -45,6 +45,20 @@ func (mr *MockProducerMockRecorder) Close() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockProducer)(nil).Close))
 }
 
+// Delivery mocks base method.
+func (m *MockProducer) Delivery() chan Delivery {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delivery")
+	ret0, _ := ret[0].(chan Delivery)
+	return ret0
+}
+
+// Delivery indicates an expected call of Delivery.
+func (mr *MockProducerMockRecorder) Delivery() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delivery", reflect.TypeOf((*MockProducer)(nil).Delivery))
+}
+
 // Flush mocks base method.
 func (m *MockProducer) Flush(timeoutMs int) int {
 	m.ctrl.T.Helper()
@@ -71,18 +85,4 @@ func (m *MockProducer) Produce(msg Message) error {
 func (mr *MockProducerMockRecorder) Produce(msg interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Produce", reflect.TypeOf((*MockProducer)(nil).Produce), msg)
-}
-
-// Responses mocks base method.
-func (m *MockProducer) Responses() chan Delivery {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Responses")
-	ret0, _ := ret[0].(chan Delivery)
-	return ret0
-}
-
-// Responses indicates an expected call of Responses.
-func (mr *MockProducerMockRecorder) Responses() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Responses", reflect.TypeOf((*MockProducer)(nil).Responses))
 }
