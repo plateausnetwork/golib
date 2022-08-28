@@ -5,6 +5,8 @@ help:
 	@echo "| Commands        | Descriptions                                                                                       |"
 	@echo "---------------------------------------------------------------------------------------------------------------------- |"
 	@echo "| help            | Lists all commands.                                                                                |"
+	@echo "| install         | Install external dependencies                                                                      |"
+	@echo "| mocks           | Generate all go mocks based on ports path.                                                         |"
 	@echo "| mocks           | Generate all go mocks based on ports path.                                                         |"
 	@echo "| test            | Run all tests and returns results and coverage to the console                                      |"
 	@echo
@@ -15,3 +17,6 @@ test:
 
 mocks:
 	go generate ./...
+
+install:
+	go install github.com/golang/mock/mockgen@latest

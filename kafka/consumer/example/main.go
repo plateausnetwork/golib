@@ -16,7 +16,7 @@ func main() {
 		},
 	})
 	if err != nil {
-		logger.Error("failed to create consumer ", err)
+		logger.Fatal("failed to create consumer ", err)
 	}
 	for res := range c.Run() {
 		if res.Error != nil {

@@ -17,14 +17,14 @@ func main() {
 		},
 	})
 	if err != nil {
-		logger.Error("failed to create producer ", err)
+		logger.Fatal("failed to create producer ", err)
 	}
 	msg, err := makeExampleMessage()
 	if err != nil {
-		logger.Error("failed to generate msg ", err)
+		logger.Fatal("failed to generate msg ", err)
 	}
 	if err = p.Produce(*msg); err != nil {
-		logger.Error("failed to produce msg ", err)
+		logger.Fatal("failed to produce msg ", err)
 	}
 	for delivery := range p.Delivery() {
 		if delivery.Error != nil {
