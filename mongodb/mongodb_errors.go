@@ -9,4 +9,7 @@ var (
 	ErrCantPing = func(err error) error {
 		return errors.New("can't ping mongodb, details: " + err.Error())
 	}
+	ErrInvalidConnString = func(err error) error {
+		return errors.New("invalid connection string, details: " + err.Error())
+	}
 )
