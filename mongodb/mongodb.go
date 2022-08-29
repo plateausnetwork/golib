@@ -47,6 +47,10 @@ func New(opts Options) (db Database, err error) {
 	opts.SetDefaults()
 	ctx, cancel := context.WithTimeout(context.Background(), opts.CtxTimeout)
 	defer cancel()
+	connString, err := opts.ExtractConnString()
+	if err != nil {
+		return nil, ErrInvalidConnString(err)
+	}
 	clientOpts := options.Client().ApplyURI(opts.URI)
 	if opts.IsReader {
 		clientOpts.SetReadPreference(readpref.SecondaryPreferred())
@@ -58,7 +62,7 @@ func New(opts Options) (db Database, err error) {
 	if err = dbImpl.client.Ping(ctx, readpref.Primary()); err != nil {
 		return nil, ErrCantPing(err)
 	}
-	dbImpl.database = dbImpl.client.Database(opts.DatabaseName)
+	dbImpl.database = dbImpl.client.Database(connString.Database)
 	return dbImpl, nil
 }
 
