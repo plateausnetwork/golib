@@ -5,6 +5,11 @@
 package web3
 
 import (
+	big "math/big"
+	reflect "reflect"
+
+	web3 "github.com/chenzhijie/go-web3"
+	common "github.com/ethereum/go-ethereum/common"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -29,4 +34,91 @@ func NewMockWeb3(ctrl *gomock.Controller) *MockWeb3 {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockWeb3) EXPECT() *MockWeb3MockRecorder {
 	return m.recorder
+}
+
+// GetBlockNumber mocks base method.
+func (m *MockWeb3) GetBlockNumber(rpcProviderURL string) uint64 {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBlockNumber", rpcProviderURL)
+	ret0, _ := ret[0].(uint64)
+	return ret0
+}
+
+// GetBlockNumber indicates an expected call of GetBlockNumber.
+func (mr *MockWeb3MockRecorder) GetBlockNumber(rpcProviderURL interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBlockNumber", reflect.TypeOf((*MockWeb3)(nil).GetBlockNumber), rpcProviderURL)
+}
+
+// GetNonce mocks base method.
+func (m *MockWeb3) GetNonce(rpcProviderURL string, addr common.Address, blockNumber *big.Int) (uint64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNonce", rpcProviderURL, addr, blockNumber)
+	ret0, _ := ret[0].(uint64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNonce indicates an expected call of GetNonce.
+func (mr *MockWeb3MockRecorder) GetNonce(rpcProviderURL, addr, blockNumber interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNonce", reflect.TypeOf((*MockWeb3)(nil).GetNonce), rpcProviderURL, addr, blockNumber)
+}
+
+// NewWeb3 mocks base method.
+func (m *MockWeb3) NewWeb3(rpcProviderURL string) (*web3.Web3, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NewWeb3", rpcProviderURL)
+	ret0, _ := ret[0].(*web3.Web3)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// NewWeb3 indicates an expected call of NewWeb3.
+func (mr *MockWeb3MockRecorder) NewWeb3(rpcProviderURL interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewWeb3", reflect.TypeOf((*MockWeb3)(nil).NewWeb3), rpcProviderURL)
+}
+
+// SendRawTransaction mocks base method.
+func (m *MockWeb3) SendRawTransaction(tokenAddr, rpcProviderURL string, to common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, data []byte) (common.Hash, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendRawTransaction", tokenAddr, rpcProviderURL, to, amount, gasLimit, gasPrice, data)
+	ret0, _ := ret[0].(common.Hash)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SendRawTransaction indicates an expected call of SendRawTransaction.
+func (mr *MockWeb3MockRecorder) SendRawTransaction(tokenAddr, rpcProviderURL, to, amount, gasLimit, gasPrice, data interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendRawTransaction", reflect.TypeOf((*MockWeb3)(nil).SendRawTransaction), tokenAddr, rpcProviderURL, to, amount, gasLimit, gasPrice, data)
+}
+
+// SetAccount mocks base method.
+func (m *MockWeb3) SetAccount(rpcProviderURL, privateKey string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetAccount", rpcProviderURL, privateKey)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetAccount indicates an expected call of SetAccount.
+func (mr *MockWeb3MockRecorder) SetAccount(rpcProviderURL, privateKey interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetAccount", reflect.TypeOf((*MockWeb3)(nil).SetAccount), rpcProviderURL, privateKey)
+}
+
+// SetChainId mocks base method.
+func (m *MockWeb3) SetChainId(rpcProviderURL string, chainId int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetChainId", rpcProviderURL, chainId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetChainId indicates an expected call of SetChainId.
+func (mr *MockWeb3MockRecorder) SetChainId(rpcProviderURL, chainId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetChainId", reflect.TypeOf((*MockWeb3)(nil).SetChainId), rpcProviderURL, chainId)
 }
