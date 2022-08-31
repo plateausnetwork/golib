@@ -9,24 +9,27 @@ import (
 )
 
 type Web3 interface {
-	NewWeb3(rpcProviderURL string) (*web3.Web3, error)
-	GetBlockNumber(rpcProviderURL string) uint64
-	SetChainId(rpcProviderURL string, chainId int64) error
-	SetAccount(rpcProviderURL string, privateKey string) error
-	GetNonce(rpcProviderURL string, addr common.Address, blockNumber *big.Int) (uint64, error)
-	SendRawTransaction(tokenAddr string, rpcProviderURL string, to common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, data []byte) (common.Hash, error)
+	GetBlockNumber() (uint64, error)
+	SetChainId(chainId int64) error
+	SetAccount(privateKey string) error
+	GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error)
+	SendRawTransaction(to common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, data []byte) (common.Hash, error)
 }
 
 type web3Impl struct {
-	rpcProvider string
+	web3 *web3.Web3
 }
 
 type Options struct {
 	RpcProvider string
 }
 
-func New(opt Options) Web3 {
-	return &web3Impl{
-		rpcProvider: opt.RpcProvider,
+func New(opt Options) (Web3, error) {
+	web3, err := web3.NewWeb3(opt.RpcProvider)
+	if err != nil {
+		return nil, err
 	}
+	return web3Impl{
+		web3: web3,
+	}, nil
 }
