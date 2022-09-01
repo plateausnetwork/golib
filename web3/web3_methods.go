@@ -1,8 +1,6 @@
 package web3
 
 import (
-	"math/big"
-
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -26,21 +24,21 @@ func (i web3Impl) SetAccount(privateKey string) error {
 	return nil
 }
 
-func (i web3Impl) GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error) {
-	nonce, err := i.web3.Eth.GetNonce(addr, blockNumber)
+func (i web3Impl) GetNonce(opts GetNonceOptions) (uint64, error) {
+	nonce, err := i.web3.Eth.GetNonce(opts.Addr, opts.BlockNumber)
 	if err != nil {
 		return 0, ErrGetNonce(err)
 	}
 	return nonce, nil
 }
 
-func (i web3Impl) SendRawTransaction(to common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, data []byte) (hash common.Hash, err error) {
+func (i web3Impl) SendRawTransaction(opts SendRawTransactionOptions) (hash common.Hash, err error) {
 	hash, err = i.web3.Eth.SendRawTransaction(
-		to,
-		amount,
-		gasLimit,
-		gasPrice,
-		data,
+		opts.To,
+		opts.Amount,
+		opts.GasLimit,
+		opts.GasPrice,
+		opts.Data,
 	)
 	if err != nil {
 		return hash, ErrSendRawTransaction(err)
