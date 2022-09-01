@@ -4,15 +4,15 @@ import "errors"
 
 var (
 	ErrGetBlockNumber = func(err error) error {
-		return errors.New("can't get current block height, details: " + err.Error())
+		return errors.New("could not get block number, details: " + err.Error())
 	}
 	ErrSetAccount = func(err error) error {
-		return errors.New("private key is empty, details: " + err.Error())
+		return errors.New("could not set account, details: " + err.Error())
 	}
 	ErrGetNonce = func(err error) error {
-		return errors.New("getTransactionCount, details: " + err.Error())
+		return errors.New("could not get nonce, details: " + err.Error())
 	}
 	ErrSendRawTransaction = func(err error) error {
-		return errors.New("sendRawTransaction, details: " + err.Error())
+		return errors.New("could not send raw transaction, details: " + err.Error())
 	}
 )
