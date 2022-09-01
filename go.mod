@@ -3,7 +3,9 @@ module github.com/rhizomplatform/golib
 go 1.17
 
 require (
+	github.com/chenzhijie/go-web3 v0.0.0-20220815040233-bb8a40fab52c
 	github.com/confluentinc/confluent-kafka-go v1.9.2
+	github.com/ethereum/go-ethereum v1.10.8
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/mock v1.6.0
@@ -15,14 +17,19 @@ require (
 )
 
 require (
+	github.com/andybalholm/brotli v1.0.0 // indirect
+	github.com/btcsuite/btcd v0.20.1-beta // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/montanaflynn/stats v0.0.0-20171201202039-1bf9dbcd8cbe // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sendgrid/rest v2.6.9+incompatible // indirect
+	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/valyala/fasthttp v1.21.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.1 // indirect
 	github.com/xdg-go/stringprep v1.0.3 // indirect
