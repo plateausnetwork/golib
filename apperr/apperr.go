@@ -7,19 +7,23 @@ import (
 	"github.com/rhizomplatform/golib/logger"
 )
 
-type AppErr struct {
-	HTTPCode int
-	Err      error
-	Key      string
-	Message  string
-}
-
 func New(httpCode int, err error, msg, key string) *AppErr {
 	appErr := &AppErr{
 		HTTPCode: httpCode,
 		Err:      err,
 		Key:      key,
 		Message:  msg,
+	}
+	logger.ErrorApp(appErr.Error())
+	return appErr
+}
+
+func NewErr(opt Options) *AppErr {
+	appErr := &AppErr{
+		HTTPCode: opt.HTTPCode,
+		Err:      opt.Err,
+		Key:      opt.Key,
+		Message:  opt.Message,
 	}
 	logger.ErrorApp(appErr.Error())
 	return appErr
