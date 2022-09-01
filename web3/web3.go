@@ -10,7 +10,7 @@ import (
 
 type Web3 interface {
 	GetBlockNumber() (uint64, error)
-	SetChainId(chainId int64) error
+	SetChainId(chainId int64)
 	SetAccount(privateKey string) error
 	GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error)
 	SendRawTransaction(to common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, data []byte) (common.Hash, error)
@@ -29,7 +29,5 @@ func New(opt Options) (Web3, error) {
 	if err != nil {
 		return nil, err
 	}
-	return web3Impl{
-		web3: web3,
-	}, nil
+	return web3Impl{web3: web3}, nil
 }

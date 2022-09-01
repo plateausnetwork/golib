@@ -14,9 +14,8 @@ func (i web3Impl) GetBlockNumber() (uint64, error) {
 	return blockNumber, nil
 }
 
-func (i web3Impl) SetChainId(chainId int64) error {
+func (i web3Impl) SetChainId(chainId int64) {
 	i.web3.Eth.SetChainId(chainId)
-	return nil
 }
 
 func (i web3Impl) SetAccount(privateKey string) error {
