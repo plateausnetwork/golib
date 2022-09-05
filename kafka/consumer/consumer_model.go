@@ -8,8 +8,9 @@ import (
 
 type (
 	Options struct {
-		Configs map[string]interface{}
-		Topics  []string
+		Configs            map[string]interface{}
+		Topics             []string
+		ReadMessageTimeout time.Duration
 	}
 	TopicPartition struct {
 		Topic     string

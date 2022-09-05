@@ -1,6 +1,8 @@
 package consumer
 
 import (
+	"time"
+
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
@@ -10,8 +12,9 @@ type (
 		Close() error
 	}
 	consumerImpl struct {
-		kafka    *kafka.Consumer
-		messages chan Response
+		kafka              *kafka.Consumer
+		messages           chan Response
+		readMessageTimeout time.Duration
 	}
 )
 
@@ -27,13 +30,17 @@ func New(opts Options) (c Consumer, err error) {
 		impl.Close()
 		return nil, err
 	}
+	if opts.ReadMessageTimeout <= 0 {
+		opts.ReadMessageTimeout = -1
+	}
+	impl.readMessageTimeout = opts.ReadMessageTimeout
 	return impl, nil
 }
 
 func (i consumerImpl) Run() chan Response {
 	i.messages = make(chan Response)
 	for {
-		msg, err := i.kafka.ReadMessage(-1)
+		msg, err := i.kafka.ReadMessage(i.readMessageTimeout)
 		i.messages <- Response{
 			Error: err,
 			Message: Message{
