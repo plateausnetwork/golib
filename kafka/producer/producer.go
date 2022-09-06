@@ -8,13 +8,12 @@ import (
 type (
 	Producer interface {
 		Produce(msg Message) error
-		Delivery() chan Delivery
+		Delivery(chDelivery chan Delivery)
 		Flush(timeoutMs int) int
 		Close()
 	}
 	producerImpl struct {
-		kafka    *kafka.Producer
-		delivery chan Delivery
+		kafka *kafka.Producer
 	}
 )
 
@@ -26,7 +25,6 @@ func New(opts Options) (p Producer, err error) {
 	if impl.kafka, err = kafka.NewProducer(&config); err != nil {
 		return nil, err
 	}
-	impl.deliveryHandler()
 	return impl, nil
 }
 
@@ -40,8 +38,21 @@ func (i producerImpl) Produce(msg Message) error {
 		}, nil)
 }
 
-func (i producerImpl) Delivery() chan Delivery {
-	return i.delivery
+func (i producerImpl) Delivery(chDelivery chan Delivery) {
+	defer close(chDelivery)
+	for e := range i.kafka.Events() {
+		switch ev := e.(type) {
+		case *kafka.Message:
+			chDelivery <- Delivery{
+				Error: ev.TopicPartition.Error,
+				TopicPartition: TopicPartition{
+					Topic:     *ev.TopicPartition.Topic,
+					Partition: ev.TopicPartition.Partition,
+					Offset:    int64(ev.TopicPartition.Offset),
+				},
+			}
+		}
+	}
 }
 
 func (i producerImpl) Flush(timeoutMs int) int {
@@ -49,26 +60,6 @@ func (i producerImpl) Flush(timeoutMs int) int {
 }
 
 func (i producerImpl) Close() {
-	close(i.delivery)
 	i.kafka.Flush(0)
 	i.kafka.Close()
-}
-
-func (i producerImpl) deliveryHandler() {
-	i.delivery = make(chan Delivery)
-	go func() {
-		for e := range i.kafka.Events() {
-			switch ev := e.(type) {
-			case *kafka.Message:
-				i.delivery <- Delivery{
-					Error: ev.TopicPartition.Error,
-					TopicPartition: TopicPartition{
-						Topic:     *ev.TopicPartition.Topic,
-						Partition: ev.TopicPartition.Partition,
-						Offset:    int64(ev.TopicPartition.Offset),
-					},
-				}
-			}
-		}
-	}()
 }

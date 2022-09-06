@@ -8,12 +8,11 @@ import (
 
 type (
 	Consumer interface {
-		Run() chan Response
+		Run(chResponse chan Response)
 		Close() error
 	}
 	consumerImpl struct {
 		kafka              *kafka.Consumer
-		messages           chan Response
 		readMessageTimeout time.Duration
 	}
 )
@@ -37,11 +36,11 @@ func New(opts Options) (c Consumer, err error) {
 	return impl, nil
 }
 
-func (i consumerImpl) Run() chan Response {
-	i.messages = make(chan Response)
+func (i consumerImpl) Run(chResponse chan Response) {
+	defer close(chResponse)
 	for {
 		msg, err := i.kafka.ReadMessage(i.readMessageTimeout)
-		i.messages <- Response{
+		chResponse <- Response{
 			Error: err,
 			Message: Message{
 				Key:       msg.Key,
@@ -60,7 +59,6 @@ func (i consumerImpl) Run() chan Response {
 }
 
 func (i consumerImpl) Close() error {
-	close(i.messages)
 	return i.kafka.Close()
 }
 

@@ -18,7 +18,9 @@ func main() {
 	if err != nil {
 		logger.Fatal("failed to create consumer ", err)
 	}
-	for res := range c.Run() {
+	chResponse := make(chan consumer.Response)
+	go c.Run(chResponse)
+	for res := range chResponse {
 		if res.Error != nil {
 			logger.Error("MESSAGE ERROR: ", res.Error)
 			continue

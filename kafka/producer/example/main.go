@@ -26,7 +26,9 @@ func main() {
 	if err = p.Produce(*msg); err != nil {
 		logger.Fatal("failed to produce msg ", err)
 	}
-	for delivery := range p.Delivery() {
+	chDelivery := make(chan producer.Delivery)
+	go p.Delivery(chDelivery)
+	for delivery := range chDelivery {
 		if delivery.Error != nil {
 			logger.Error("DELIVERY ERROR: ", delivery.Error)
 			continue
