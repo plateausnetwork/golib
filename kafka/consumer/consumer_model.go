@@ -30,14 +30,17 @@ type (
 		Timestamp      time.Time
 	}
 	Response struct {
-		Message Message
 		Error   error
+		Message *Message
 	}
 )
 
-func (o *Options) getConfigMap() (cm kafka.ConfigMap) {
+func (o *Options) getConfigMap() (kafka.ConfigMap, error) {
+	var cm = kafka.ConfigMap{}
 	for key, val := range o.Configs {
-		cm.SetKey(key, val)
+		if err := cm.SetKey(key, val); err != nil {
+			return nil, err
+		}
 	}
-	return cm
+	return cm, nil
 }

@@ -18,10 +18,11 @@ type (
 )
 
 func New(opts Options) (c Consumer, err error) {
-	var (
-		config = opts.getConfigMap()
-		impl   = consumerImpl{}
-	)
+	var impl consumerImpl
+	config, err := opts.getConfigMap()
+	if err != nil {
+		return nil, err
+	}
 	if impl.kafka, err = kafka.NewConsumer(&config); err != nil {
 		return nil, err
 	}
@@ -39,21 +40,20 @@ func New(opts Options) (c Consumer, err error) {
 func (i consumerImpl) Run(chResponse chan Response) {
 	defer close(chResponse)
 	for {
+		i.kafka.ReadMessage(-1)
 		msg, err := i.kafka.ReadMessage(i.readMessageTimeout)
-		chResponse <- Response{
-			Error: err,
-			Message: Message{
-				Key:       msg.Key,
-				Value:     msg.Value,
-				Headers:   i.convertMessageHeaders(msg.Headers),
-				Timestamp: msg.Timestamp,
-				TopicPartition: TopicPartition{
-					Topic:     *msg.TopicPartition.Topic,
-					Partition: msg.TopicPartition.Partition,
-					Offset:    int64(msg.TopicPartition.Offset),
-					Metadata:  msg.TopicPartition.Metadata,
-				},
-			},
+		if err != nil {
+			chResponse <- Response{
+				Error:   err,
+				Message: nil,
+			}
+			continue
+		}
+		if msg != nil {
+			chResponse <- Response{
+				Error:   nil,
+				Message: i.convertMessage(msg),
+			}
 		}
 	}
 }
@@ -75,4 +75,22 @@ func (i consumerImpl) convertMessageHeaders(headers []kafka.Header) []Header {
 		}
 	}
 	return result
+}
+
+func (i consumerImpl) convertMessage(msg *kafka.Message) *Message {
+	if msg == nil {
+		return nil
+	}
+	return &Message{
+		Key:       msg.Key,
+		Value:     msg.Value,
+		Headers:   i.convertMessageHeaders(msg.Headers),
+		Timestamp: msg.Timestamp,
+		TopicPartition: TopicPartition{
+			Topic:     *msg.TopicPartition.Topic,
+			Partition: msg.TopicPartition.Partition,
+			Offset:    int64(msg.TopicPartition.Offset),
+			Metadata:  msg.TopicPartition.Metadata,
+		},
+	}
 }
