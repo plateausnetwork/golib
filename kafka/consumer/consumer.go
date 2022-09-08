@@ -40,7 +40,6 @@ func New(opts Options) (c Consumer, err error) {
 func (i consumerImpl) Run(chResponse chan Response) {
 	defer close(chResponse)
 	for {
-		i.kafka.ReadMessage(-1)
 		msg, err := i.kafka.ReadMessage(i.readMessageTimeout)
 		if err != nil {
 			chResponse <- Response{
