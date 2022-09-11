@@ -12,6 +12,7 @@ import (
 type (
 	Database interface {
 		Name() string
+		URI() string
 		Collection(name string) Collection
 	}
 	Collection interface {
@@ -40,6 +41,7 @@ type (
 	mongodbImpl struct {
 		client   *mongo.Client
 		database *mongo.Database
+		uri      string
 	}
 )
 
@@ -62,6 +64,7 @@ func New(opts Options) (db Database, err error) {
 	if err = dbImpl.client.Ping(ctx, readpref.Primary()); err != nil {
 		return nil, ErrCantPing(err)
 	}
+	dbImpl.uri = clientOpts.GetURI()
 	dbImpl.database = dbImpl.client.Database(connString.Database)
 	return dbImpl, nil
 }
@@ -72,4 +75,8 @@ func (i mongodbImpl) Name() string {
 
 func (i mongodbImpl) Collection(name string) Collection {
 	return i.database.Collection(name)
+}
+
+func (i mongodbImpl) URI() string {
+	return i.uri
 }
