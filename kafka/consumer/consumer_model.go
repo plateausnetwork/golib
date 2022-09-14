@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/rhizomplatform/golib/kafka/kafkamod"
 )
 
 type (
@@ -12,26 +13,9 @@ type (
 		Topics             []string
 		ReadMessageTimeout time.Duration
 	}
-	TopicPartition struct {
-		Topic     string
-		Partition int32
-		Offset    int64
-		Metadata  *string
-	}
-	Header struct {
-		Key   string
-		Value []byte
-	}
-	Message struct {
-		TopicPartition TopicPartition
-		Value          []byte
-		Key            []byte
-		Headers        []Header
-		Timestamp      time.Time
-	}
 	Response struct {
 		Error   error
-		Message *Message
+		Message *kafkamod.Message
 	}
 )
 

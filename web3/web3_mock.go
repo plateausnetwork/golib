@@ -5,7 +5,6 @@
 package web3
 
 import (
-	big "math/big"
 	reflect "reflect"
 
 	common "github.com/ethereum/go-ethereum/common"
@@ -51,33 +50,33 @@ func (mr *MockWeb3MockRecorder) GetBlockNumber() *gomock.Call {
 }
 
 // GetNonce mocks base method.
-func (m *MockWeb3) GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error) {
+func (m *MockWeb3) GetNonce(opts GetNonceOptions) (uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetNonce", addr, blockNumber)
+	ret := m.ctrl.Call(m, "GetNonce", opts)
 	ret0, _ := ret[0].(uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetNonce indicates an expected call of GetNonce.
-func (mr *MockWeb3MockRecorder) GetNonce(addr, blockNumber interface{}) *gomock.Call {
+func (mr *MockWeb3MockRecorder) GetNonce(opts interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNonce", reflect.TypeOf((*MockWeb3)(nil).GetNonce), addr, blockNumber)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNonce", reflect.TypeOf((*MockWeb3)(nil).GetNonce), opts)
 }
 
 // SendRawTransaction mocks base method.
-func (m *MockWeb3) SendRawTransaction(to common.Address, amount *big.Int, gasLimit uint64, gasPrice *big.Int, data []byte) (common.Hash, error) {
+func (m *MockWeb3) SendRawTransaction(opt SendRawTransactionOptions) (common.Hash, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendRawTransaction", to, amount, gasLimit, gasPrice, data)
+	ret := m.ctrl.Call(m, "SendRawTransaction", opt)
 	ret0, _ := ret[0].(common.Hash)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SendRawTransaction indicates an expected call of SendRawTransaction.
-func (mr *MockWeb3MockRecorder) SendRawTransaction(to, amount, gasLimit, gasPrice, data interface{}) *gomock.Call {
+func (mr *MockWeb3MockRecorder) SendRawTransaction(opt interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendRawTransaction", reflect.TypeOf((*MockWeb3)(nil).SendRawTransaction), to, amount, gasLimit, gasPrice, data)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendRawTransaction", reflect.TypeOf((*MockWeb3)(nil).SendRawTransaction), opt)
 }
 
 // SetAccount mocks base method.
@@ -95,11 +94,9 @@ func (mr *MockWeb3MockRecorder) SetAccount(privateKey interface{}) *gomock.Call 
 }
 
 // SetChainId mocks base method.
-func (m *MockWeb3) SetChainId(chainId int64) error {
+func (m *MockWeb3) SetChainId(chainId int64) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SetChainId", chainId)
-	ret0, _ := ret[0].(error)
-	return ret0
+	m.ctrl.Call(m, "SetChainId", chainId)
 }
 
 // SetChainId indicates an expected call of SetChainId.

@@ -64,6 +64,20 @@ func (mr *MockDatabaseMockRecorder) Name() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Name", reflect.TypeOf((*MockDatabase)(nil).Name))
 }
 
+// URI mocks base method.
+func (m *MockDatabase) URI() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "URI")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// URI indicates an expected call of URI.
+func (mr *MockDatabaseMockRecorder) URI() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "URI", reflect.TypeOf((*MockDatabase)(nil).URI))
+}
+
 // MockCollection is a mock of Collection interface.
 type MockCollection struct {
 	ctrl     *gomock.Controller

@@ -3,6 +3,7 @@ package example
 import (
 	"encoding/json"
 
+	"github.com/rhizomplatform/golib/kafka/kafkamod"
 	"github.com/rhizomplatform/golib/kafka/producer"
 	"github.com/rhizomplatform/golib/logger"
 )
@@ -38,7 +39,7 @@ func main() {
 	p.Close()
 }
 
-func makeExampleMessage() (*producer.Message, error) {
+func makeExampleMessage() (*kafkamod.Message, error) {
 	msgBytes, err := json.Marshal(map[string]string{
 		"name":  "rhz",
 		"email": "contact@rhizom.me",
@@ -47,11 +48,11 @@ func makeExampleMessage() (*producer.Message, error) {
 		logger.Error("failed to convert json ", err)
 		return nil, err
 	}
-	msgHeader := []producer.Header{
+	msgHeader := []kafkamod.Header{
 		{Key: "Content-Type", Value: []byte("application/json")},
 	}
-	msg := producer.Message{
-		TopicPartition: producer.TopicPartition{
+	msg := kafkamod.Message{
+		TopicPartition: kafkamod.TopicPartition{
 			Topic: TopicExample,
 		},
 		Value:   msgBytes,

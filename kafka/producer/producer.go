@@ -3,11 +3,12 @@ package producer
 
 import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/rhizomplatform/golib/kafka/kafkamod"
 )
 
 type (
 	Producer interface {
-		Produce(msg Message) error
+		Produce(msg kafkamod.Message) error
 		Delivery(chDelivery chan Delivery)
 		Flush(timeoutMs int) int
 		Close()
@@ -28,13 +29,13 @@ func New(opts Options) (p Producer, err error) {
 	return impl, nil
 }
 
-func (i producerImpl) Produce(msg Message) error {
+func (i producerImpl) Produce(msg kafkamod.Message) error {
 	return i.kafka.Produce(
 		&kafka.Message{
-			TopicPartition: msg.kafkaTopicPartition(),
+			TopicPartition: msg.KafkaTopicPartition(),
 			Value:          msg.Value,
 			Key:            msg.Key,
-			Headers:        msg.kafkaHeaders(),
+			Headers:        msg.KafkaHeaders(),
 		}, nil)
 }
 
@@ -45,7 +46,7 @@ func (i producerImpl) Delivery(chDelivery chan Delivery) {
 		case *kafka.Message:
 			chDelivery <- Delivery{
 				Error: ev.TopicPartition.Error,
-				TopicPartition: TopicPartition{
+				TopicPartition: kafkamod.TopicPartition{
 					Topic:     *ev.TopicPartition.Topic,
 					Partition: ev.TopicPartition.Partition,
 					Offset:    int64(ev.TopicPartition.Offset),

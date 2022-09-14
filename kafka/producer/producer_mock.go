@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
+	kafkamod "github.com/rhizomplatform/golib/kafka/kafkamod"
 )
 
 // MockProducer is a mock of Producer interface.
@@ -46,17 +47,15 @@ func (mr *MockProducerMockRecorder) Close() *gomock.Call {
 }
 
 // Delivery mocks base method.
-func (m *MockProducer) Delivery() chan Delivery {
+func (m *MockProducer) Delivery(chDelivery chan Delivery) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delivery")
-	ret0, _ := ret[0].(chan Delivery)
-	return ret0
+	m.ctrl.Call(m, "Delivery", chDelivery)
 }
 
 // Delivery indicates an expected call of Delivery.
-func (mr *MockProducerMockRecorder) Delivery() *gomock.Call {
+func (mr *MockProducerMockRecorder) Delivery(chDelivery interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delivery", reflect.TypeOf((*MockProducer)(nil).Delivery))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delivery", reflect.TypeOf((*MockProducer)(nil).Delivery), chDelivery)
 }
 
 // Flush mocks base method.
@@ -74,7 +73,7 @@ func (mr *MockProducerMockRecorder) Flush(timeoutMs interface{}) *gomock.Call {
 }
 
 // Produce mocks base method.
-func (m *MockProducer) Produce(msg Message) error {
+func (m *MockProducer) Produce(msg kafkamod.Message) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Produce", msg)
 	ret0, _ := ret[0].(error)
