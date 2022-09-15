@@ -12,6 +12,7 @@ type Message struct {
 	Key            []byte
 	Headers        []Header
 	Timestamp      time.Time
+	Metadata       *string
 }
 
 func (m Message) KafkaHeaders() []kafka.Header {
@@ -28,6 +29,7 @@ func (m Message) KafkaHeaders() []kafka.Header {
 func (m Message) KafkaTopicPartition() (tp kafka.TopicPartition) {
 	tp.Topic = &m.TopicPartition.Topic
 	tp.Partition = m.TopicPartition.Partition
+	tp.Metadata = m.Metadata
 	tp.Offset.Set(m.TopicPartition.Offset)
 	return tp
 }

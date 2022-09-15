@@ -15,6 +15,7 @@ type (
 	consumerImpl struct {
 		kafka              *kafka.Consumer
 		readMessageTimeout time.Duration
+		readMessageDelay   time.Duration
 	}
 )
 
@@ -35,17 +36,23 @@ func New(opts Options) (c Consumer, err error) {
 		opts.ReadMessageTimeout = -1
 	}
 	impl.readMessageTimeout = opts.ReadMessageTimeout
+	impl.readMessageDelay = opts.ReadMessageDelay
 	return impl, nil
 }
 
 func (i consumerImpl) Run(chResponse chan Response) {
 	defer close(chResponse)
 	for {
+		if i.readMessageDelay > 0 {
+			time.Sleep(i.readMessageDelay)
+		}
 		msg, err := i.kafka.ReadMessage(i.readMessageTimeout)
 		if err != nil {
-			chResponse <- Response{
-				Error:   err,
-				Message: nil,
+			if err.(kafka.Error).Code() != kafka.ErrTimedOut {
+				chResponse <- Response{
+					Error:   err,
+					Message: nil,
+				}
 			}
 			continue
 		}

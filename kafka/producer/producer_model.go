@@ -15,11 +15,10 @@ type (
 	}
 )
 
-func (o *Options) getConfigMap() (cm kafka.ConfigMap) {
+func (o *Options) getConfigMap() kafka.ConfigMap {
+	var cm = kafka.ConfigMap{}
 	for key, val := range o.Configs {
 		cm.SetKey(key, val)
 	}
 	return cm
 }
-
-

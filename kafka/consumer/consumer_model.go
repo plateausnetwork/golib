@@ -12,6 +12,7 @@ type (
 		Configs            map[string]interface{}
 		Topics             []string
 		ReadMessageTimeout time.Duration
+		ReadMessageDelay   time.Duration
 	}
 	Response struct {
 		Error   error
