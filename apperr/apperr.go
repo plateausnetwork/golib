@@ -24,24 +24,28 @@ func NewErr(opt Options) *AppErr {
 		Err:      opt.Err,
 		Key:      opt.Key,
 		Message:  opt.Message,
+		Data:     opt.Data,
 	}
 	logger.ErrorApp(appErr.Error())
 	return appErr
 }
 
 func (appErr AppErr) Error() string {
-	var messages []string
+	var elements = make([]string, 0, 5)
 	if appErr.HTTPCode > 0 {
-		messages = append(messages, fmt.Sprintf("http: %d", appErr.HTTPCode))
+		elements = append(elements, fmt.Sprintf("http: %d", appErr.HTTPCode))
 	}
 	if appErr.Err != nil {
-		messages = append(messages, fmt.Sprintf("err: %v", appErr.Err))
+		elements = append(elements, fmt.Sprintf("err: %v", appErr.Err))
 	}
 	if appErr.Key != "" {
-		messages = append(messages, fmt.Sprintf("key: %s", appErr.Key))
+		elements = append(elements, fmt.Sprintf("key: %s", appErr.Key))
 	}
 	if appErr.Message != "" {
-		messages = append(messages, fmt.Sprintf("msg: %s", appErr.Message))
+		elements = append(elements, fmt.Sprintf("msg: %s", appErr.Message))
 	}
-	return strings.Join(messages, ", ")
+	if appErr.Data != nil {
+		elements = append(elements, fmt.Sprintf("data: %v", appErr.Data))
+	}
+	return strings.Join(elements, ", ")
 }
