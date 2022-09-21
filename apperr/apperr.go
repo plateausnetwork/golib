@@ -44,8 +44,5 @@ func (appErr AppErr) Error() string {
 	if appErr.Message != "" {
 		elements = append(elements, fmt.Sprintf("msg: %s", appErr.Message))
 	}
-	if appErr.Data != nil {
-		elements = append(elements, fmt.Sprintf("data: %v", appErr.Data))
-	}
 	return strings.Join(elements, ", ")
 }
