@@ -5,8 +5,10 @@
 package web3
 
 import (
+	big "math/big"
 	reflect "reflect"
 
+	abi "github.com/ethereum/go-ethereum/accounts/abi"
 	common "github.com/ethereum/go-ethereum/common"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -50,33 +52,53 @@ func (mr *MockWeb3MockRecorder) GetBlockNumber() *gomock.Call {
 }
 
 // GetNonce mocks base method.
-func (m *MockWeb3) GetNonce(opts GetNonceOptions) (uint64, error) {
+func (m *MockWeb3) GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetNonce", opts)
+	ret := m.ctrl.Call(m, "GetNonce", addr, blockNumber)
 	ret0, _ := ret[0].(uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetNonce indicates an expected call of GetNonce.
-func (mr *MockWeb3MockRecorder) GetNonce(opts interface{}) *gomock.Call {
+func (mr *MockWeb3MockRecorder) GetNonce(addr, blockNumber interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNonce", reflect.TypeOf((*MockWeb3)(nil).GetNonce), opts)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNonce", reflect.TypeOf((*MockWeb3)(nil).GetNonce), addr, blockNumber)
+}
+
+// NewContract mocks base method.
+func (m *MockWeb3) NewContract(abiString string, contractAddr ...string) (Contract, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{abiString}
+	for _, a := range contractAddr {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "NewContract", varargs...)
+	ret0, _ := ret[0].(Contract)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// NewContract indicates an expected call of NewContract.
+func (mr *MockWeb3MockRecorder) NewContract(abiString interface{}, contractAddr ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{abiString}, contractAddr...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NewContract", reflect.TypeOf((*MockWeb3)(nil).NewContract), varargs...)
 }
 
 // SendRawTransaction mocks base method.
-func (m *MockWeb3) SendRawTransaction(opt SendRawTransactionOptions) (common.Hash, error) {
+func (m *MockWeb3) SendRawTransaction(to common.Address, data []byte, amount, gasPrice *big.Int, gasLimit uint64) (common.Hash, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendRawTransaction", opt)
+	ret := m.ctrl.Call(m, "SendRawTransaction", to, data, amount, gasPrice, gasLimit)
 	ret0, _ := ret[0].(common.Hash)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SendRawTransaction indicates an expected call of SendRawTransaction.
-func (mr *MockWeb3MockRecorder) SendRawTransaction(opt interface{}) *gomock.Call {
+func (mr *MockWeb3MockRecorder) SendRawTransaction(to, data, amount, gasPrice, gasLimit interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendRawTransaction", reflect.TypeOf((*MockWeb3)(nil).SendRawTransaction), opt)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendRawTransaction", reflect.TypeOf((*MockWeb3)(nil).SendRawTransaction), to, data, amount, gasPrice, gasLimit)
 }
 
 // SetAccount mocks base method.
@@ -103,4 +125,149 @@ func (m *MockWeb3) SetChainId(chainId int64) {
 func (mr *MockWeb3MockRecorder) SetChainId(chainId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetChainId", reflect.TypeOf((*MockWeb3)(nil).SetChainId), chainId)
+}
+
+// MockContract is a mock of Contract interface.
+type MockContract struct {
+	ctrl     *gomock.Controller
+	recorder *MockContractMockRecorder
+}
+
+// MockContractMockRecorder is the mock recorder for MockContract.
+type MockContractMockRecorder struct {
+	mock *MockContract
+}
+
+// NewMockContract creates a new mock instance.
+func NewMockContract(ctrl *gomock.Controller) *MockContract {
+	mock := &MockContract{ctrl: ctrl}
+	mock.recorder = &MockContractMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockContract) EXPECT() *MockContractMockRecorder {
+	return m.recorder
+}
+
+// Address mocks base method.
+func (m *MockContract) Address() common.Address {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Address")
+	ret0, _ := ret[0].(common.Address)
+	return ret0
+}
+
+// Address indicates an expected call of Address.
+func (mr *MockContractMockRecorder) Address() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Address", reflect.TypeOf((*MockContract)(nil).Address))
+}
+
+// AllMethods mocks base method.
+func (m *MockContract) AllMethods() []string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AllMethods")
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// AllMethods indicates an expected call of AllMethods.
+func (mr *MockContractMockRecorder) AllMethods() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AllMethods", reflect.TypeOf((*MockContract)(nil).AllMethods))
+}
+
+// Call mocks base method.
+func (m *MockContract) Call(methodName string, args ...interface{}) (interface{}, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{methodName}
+	for _, a := range args {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Call", varargs...)
+	ret0, _ := ret[0].(interface{})
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Call indicates an expected call of Call.
+func (mr *MockContractMockRecorder) Call(methodName interface{}, args ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{methodName}, args...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Call", reflect.TypeOf((*MockContract)(nil).Call), varargs...)
+}
+
+// CallWithFromAndValue mocks base method.
+func (m *MockContract) CallWithFromAndValue(methodName string, from common.Address, value *big.Int, args ...interface{}) ([]interface{}, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{methodName, from, value}
+	for _, a := range args {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CallWithFromAndValue", varargs...)
+	ret0, _ := ret[0].([]interface{})
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CallWithFromAndValue indicates an expected call of CallWithFromAndValue.
+func (mr *MockContractMockRecorder) CallWithFromAndValue(methodName, from, value interface{}, args ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{methodName, from, value}, args...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CallWithFromAndValue", reflect.TypeOf((*MockContract)(nil).CallWithFromAndValue), varargs...)
+}
+
+// CallWithMultiReturns mocks base method.
+func (m *MockContract) CallWithMultiReturns(methodName string, args ...interface{}) ([]interface{}, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{methodName}
+	for _, a := range args {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "CallWithMultiReturns", varargs...)
+	ret0, _ := ret[0].([]interface{})
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CallWithMultiReturns indicates an expected call of CallWithMultiReturns.
+func (mr *MockContractMockRecorder) CallWithMultiReturns(methodName interface{}, args ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{methodName}, args...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CallWithMultiReturns", reflect.TypeOf((*MockContract)(nil).CallWithMultiReturns), varargs...)
+}
+
+// EncodeABI mocks base method.
+func (m *MockContract) EncodeABI(methodName string, args ...interface{}) ([]byte, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{methodName}
+	for _, a := range args {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "EncodeABI", varargs...)
+	ret0, _ := ret[0].([]byte)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// EncodeABI indicates an expected call of EncodeABI.
+func (mr *MockContractMockRecorder) EncodeABI(methodName interface{}, args ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{methodName}, args...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EncodeABI", reflect.TypeOf((*MockContract)(nil).EncodeABI), varargs...)
+}
+
+// Methods mocks base method.
+func (m *MockContract) Methods(methodName string) abi.Method {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Methods", methodName)
+	ret0, _ := ret[0].(abi.Method)
+	return ret0
+}
+
+// Methods indicates an expected call of Methods.
+func (mr *MockContractMockRecorder) Methods(methodName interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Methods", reflect.TypeOf((*MockContract)(nil).Methods), methodName)
 }
