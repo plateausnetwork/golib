@@ -14,23 +14,20 @@ func (i web3Impl) GetBlockNumber() (uint64, error) {
 	return blockNumber, nil
 }
 
-func (i web3Impl) SetChainId(chainId int64) {
-	i.web3.Eth.SetChainId(chainId)
-}
-
-func (i web3Impl) SetAccount(privateKey string) error {
-	if err := i.web3.Eth.SetAccount(privateKey); err != nil {
-		return ErrSetAccount(err)
-	}
-	return nil
-}
-
 func (i web3Impl) GetNonce(addr common.Address, blockNumber *big.Int) (uint64, error) {
 	nonce, err := i.web3.Eth.GetNonce(addr, blockNumber)
 	if err != nil {
 		return 0, ErrGetNonce(err)
 	}
 	return nonce, nil
+}
+
+func (i web3Impl) NewContract(abiString string, contractAddr ...string) (Contract, error) {
+	contract, err := i.web3.Eth.NewContract(abiString, contractAddr...)
+	if err != nil {
+		return nil, ErrCreateContract(err)
+	}
+	return contract, nil
 }
 
 func (i web3Impl) SendRawTransaction(
@@ -43,10 +40,13 @@ func (i web3Impl) SendRawTransaction(
 	return hash, nil
 }
 
-func (i web3Impl) NewContract(abiString string, contractAddr ...string) (Contract, error) {
-	contract, err := i.web3.Eth.NewContract(abiString, contractAddr...)
-	if err != nil {
-		return nil, ErrCreateContract(err)
+func (i web3Impl) SetAccount(privateKey string) error {
+	if err := i.web3.Eth.SetAccount(privateKey); err != nil {
+		return ErrSetAccount(err)
 	}
-	return contract, nil
+	return nil
+}
+
+func (i web3Impl) SetChainId(chainId int64) {
+	i.web3.Eth.SetChainId(chainId)
 }
