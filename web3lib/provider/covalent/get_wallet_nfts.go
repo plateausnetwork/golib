@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"sync"
 
+	"github.com/rhizomplatform/golib/logger"
 	"github.com/rhizomplatform/golib/web3lib/web3mod"
 )
 
@@ -15,7 +17,7 @@ const (
 	ERC1155Type     = "erc1155"
 )
 
-func (i implConvalent) GetWalletNFTs(in web3mod.GetWalletNFTsIn) (out web3mod.GetWalletNFTsOut) {
+func (i *implConvalent) GetWalletNFTs(in web3mod.GetWalletNFTsIn) (out web3mod.GetWalletNFTsOut) {
 	balance, err := i.getBalanceFromHttp(in)
 	if err != nil {
 		return web3mod.GetWalletNFTsOut{
@@ -25,13 +27,46 @@ func (i implConvalent) GetWalletNFTs(in web3mod.GetWalletNFTsIn) (out web3mod.Ge
 	}
 	nftList := i.extractNFTListFromBalance(balance)
 	nftList = i.filterNFTListByContractAddress(nftList, in.NFTAddressFilter)
+	nftList = i.getNFTListMetadata(in.ChainID, nftList)
 	return web3mod.GetWalletNFTsOut{
 		List:  nftList,
 		Error: nil,
 	}
 }
 
-func (i implConvalent) getBalanceFromHttp(in web3mod.GetWalletNFTsIn) (*GetBalanceOut, error) {
+func (i *implConvalent) getNFTListMetadata(chainID int, nftList []web3mod.WalletNFT) []web3mod.WalletNFT {
+	var wg sync.WaitGroup
+	for k := 0; k < len(nftList); k++ {
+		nft := &nftList[k]
+		for j := 0; j < len(nft.NFTData); j++ {
+			nftData := &nft.NFTData[j]
+			wg.Add(1)
+			go func(wg *sync.WaitGroup, nftData *web3mod.NFTData, i *implConvalent) {
+				defer wg.Done()
+				request := GetExternalMetadataIn{
+					ContractAddress: nft.ContractAddress,
+					ChainID:         chainID,
+					NFTID:           nftData.TokenID,
+				}
+				httpResponse, err := i.getExternalMetadataFromHttp(request)
+				if err != nil {
+					logger.Error("failed to get external, request: ", request, " metadata: ", err)
+				}
+				validResponse := httpResponse != nil && httpResponse.Data != nil && httpResponse.Error == false && len(httpResponse.Data.Items) > 0
+				if validResponse {
+					metadata := httpResponse.Data.Items[0].NFTData
+					if len(metadata) > 0 {
+						nftData.TokenURL = metadata[0].TokenURL
+					}
+				}
+			}(&wg, nftData, i)
+		}
+	}
+	wg.Wait()
+	return nftList
+}
+
+func (i *implConvalent) getBalanceFromHttp(in web3mod.GetWalletNFTsIn) (*GetBalanceOut, error) {
 	requestURL := fmt.Sprintf("%s%d/address/%s/balances_v2/?nft=true&no-nft-fetch=true", i.apiURL, in.ChainID, in.Wallet)
 	res, err := i.httpClient.Get(requestURL)
 	if err != nil {
@@ -55,7 +90,31 @@ func (i implConvalent) getBalanceFromHttp(in web3mod.GetWalletNFTsIn) (*GetBalan
 	return balance, nil
 }
 
-func (i implConvalent) extractNFTListFromBalance(balance *GetBalanceOut) []web3mod.WalletNFT {
+func (i *implConvalent) getExternalMetadataFromHttp(in GetExternalMetadataIn) (*GetExternalMetadataOut, error) {
+	requestURL := fmt.Sprintf("%s%d/tokens/%s/nft_metadata/%s/", i.apiURL, in.ChainID, in.ContractAddress, in.NFTID)
+	res, err := i.httpClient.Get(requestURL)
+	if err != nil {
+		return nil, err
+	}
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	if res.StatusCode < 200 || res.StatusCode >= 300 {
+		return nil, fmt.Errorf(
+			"failed to get external metadata from %s, status code: %d, body: %s",
+			requestURL, res.StatusCode, string(body),
+		)
+	}
+	nftMetadata := &GetExternalMetadataOut{}
+	if err = json.Unmarshal(body, nftMetadata); err != nil {
+		return nil, err
+	}
+	return nftMetadata, nil
+}
+
+func (i *implConvalent) extractNFTListFromBalance(balance *GetBalanceOut) []web3mod.WalletNFT {
 	if balance == nil || balance.Data == nil {
 		return []web3mod.WalletNFT{}
 	}
@@ -100,7 +159,7 @@ func (i implConvalent) extractNFTListFromBalance(balance *GetBalanceOut) []web3m
 	return nftList
 }
 
-func (i implConvalent) filterNFTListByContractAddress(
+func (i *implConvalent) filterNFTListByContractAddress(
 	nftList []web3mod.WalletNFT, contractAddress string,
 ) (filtered []web3mod.WalletNFT) {
 	if contractAddress == "" || len(nftList) == 0 {
