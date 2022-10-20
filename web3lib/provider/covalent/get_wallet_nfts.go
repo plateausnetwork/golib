@@ -26,15 +26,15 @@ func (i *implConvalent) GetWalletNFTs(in web3mod.GetWalletNFTsIn) (out web3mod.G
 		}
 	}
 	nftList := i.extractNFTListFromBalance(balance)
-	nftList = i.filterNFTListByContractAddress(nftList, in.NFTAddressFilter)
+	nftList = nftList.FilterByAddress(in.NFTAddressFilter)
 	nftList = i.getNFTListMetadata(in.ChainID, nftList)
 	return web3mod.GetWalletNFTsOut{
-		List:  nftList,
+		List:  &nftList,
 		Error: nil,
 	}
 }
 
-func (i *implConvalent) getNFTListMetadata(chainID int, nftList []web3mod.WalletNFT) []web3mod.WalletNFT {
+func (i *implConvalent) getNFTListMetadata(chainID int, nftList web3mod.WalletNFTs) web3mod.WalletNFTs {
 	var wg sync.WaitGroup
 	for k := 0; k < len(nftList); k++ {
 		nft := &nftList[k]
@@ -114,9 +114,9 @@ func (i *implConvalent) getExternalMetadataFromHttp(in GetExternalMetadataIn) (*
 	return nftMetadata, nil
 }
 
-func (i *implConvalent) extractNFTListFromBalance(balance *GetBalanceOut) []web3mod.WalletNFT {
+func (i *implConvalent) extractNFTListFromBalance(balance *GetBalanceOut) web3mod.WalletNFTs {
 	if balance == nil || balance.Data == nil {
-		return []web3mod.WalletNFT{}
+		return web3mod.WalletNFTs{}
 	}
 	var (
 		conType string
@@ -157,20 +157,4 @@ func (i *implConvalent) extractNFTListFromBalance(balance *GetBalanceOut) []web3
 		}
 	}
 	return nftList
-}
-
-func (i *implConvalent) filterNFTListByContractAddress(
-	nftList []web3mod.WalletNFT, contractAddress string,
-) (filtered []web3mod.WalletNFT) {
-	if contractAddress == "" || len(nftList) == 0 {
-		return nftList
-	}
-	filtered = make([]web3mod.WalletNFT, 0, 1)
-	for _, nft := range nftList {
-		if nft.ContractAddress == contractAddress {
-			filtered = append(filtered, nft)
-			break
-		}
-	}
-	return filtered
 }
