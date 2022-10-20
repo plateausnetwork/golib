@@ -43,6 +43,10 @@ func ErrorApp(msg ...interface{}) {
 	logsApp.Error(fmt.Sprint(msg...))
 }
 
+func InfoApp(msg ...interface{}) {
+	logsApp.Info(fmt.Sprint(msg...))
+}
+
 func Fatal(msg ...interface{}) {
 	logs.Fatal(fmt.Sprint(msg...))
 }
