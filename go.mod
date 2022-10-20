@@ -5,7 +5,6 @@ go 1.17
 require (
 	github.com/confluentinc/confluent-kafka-go v1.9.2
 	github.com/go-playground/validator/v10 v10.11.0
-	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/mock v1.6.0
