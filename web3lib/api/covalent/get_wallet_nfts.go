@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/rhizomplatform/golib/logger"
-	"github.com/rhizomplatform/golib/web3lib/web3mod"
+	"github.com/rhizomplatform/golib/web3lib/api/web3mod"
 )
 
 const (

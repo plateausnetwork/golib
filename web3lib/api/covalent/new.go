@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/rhizomplatform/golib/httpclient"
-	"github.com/rhizomplatform/golib/web3lib/web3mod"
+	"github.com/rhizomplatform/golib/web3lib/api/web3mod"
 )
 
 type (
