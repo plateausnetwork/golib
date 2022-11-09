@@ -62,3 +62,18 @@ func (mr *MockMoralisNFTMockRecorder) GetList(addressWallet, addressNFT, chain, 
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetList", reflect.TypeOf((*MockMoralisNFT)(nil).GetList), addressWallet, addressNFT, chain, format, cursor, limit)
 }
+
+// GetWalletBalance mocks base method.
+func (m *MockMoralisNFT) GetWalletBalance(addressWallet, chain, tokenAddress string) ([]byte, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetWalletBalance", addressWallet, chain, tokenAddress)
+	ret0, _ := ret[0].([]byte)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetWalletBalance indicates an expected call of GetWalletBalance.
+func (mr *MockMoralisNFTMockRecorder) GetWalletBalance(addressWallet, chain, tokenAddress interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetWalletBalance", reflect.TypeOf((*MockMoralisNFT)(nil).GetWalletBalance), addressWallet, chain, tokenAddress)
+}
