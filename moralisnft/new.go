@@ -6,6 +6,7 @@ import "github.com/rhizomplatform/golib/logger"
 type MoralisNFT interface {
 	GetList(addressWallet, addressNFT, chain, format, cursor string, limit int) ([]byte, error)
 	GetInContract(tokenAddress, tokenID, chain, format string) ([]byte, error)
+	GetWalletBalance(addressWallet, chain, tokenAddress string) ([]byte, error)
 }
 
 func NewMoralisNFT(opt Options) MoralisNFT {
