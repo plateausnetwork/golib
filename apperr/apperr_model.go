@@ -9,10 +9,10 @@ type AppErr struct {
 }
 
 type Options struct {
-	HTTPCode    int
-	Err         error
-	Key         string
-	Message     string
-	Data        interface{}
-	DoNotLogErr bool
+	HTTPCode int
+	Err      error
+	Key      string
+	Message  string
+	Data     interface{}
+	NotPrint bool
 }
