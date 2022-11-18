@@ -26,6 +26,9 @@ func NewErr(opt Options) *AppErr {
 		Message:  opt.Message,
 		Data:     opt.Data,
 	}
+	if opt.NotPrint {
+		return appErr
+	}
 	logger.ErrorApp(appErr.Error())
 	return appErr
 }

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/rhizomplatform/golib/web3lib/provider/covalent"
-	"github.com/rhizomplatform/golib/web3lib/web3mod"
+	"github.com/rhizomplatform/golib/web3lib/api/covalent"
+	"github.com/rhizomplatform/golib/web3lib/api/web3mod"
 )
 
 const (

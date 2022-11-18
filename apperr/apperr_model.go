@@ -14,4 +14,5 @@ type Options struct {
 	Key      string
 	Message  string
 	Data     interface{}
+	NotPrint bool
 }
