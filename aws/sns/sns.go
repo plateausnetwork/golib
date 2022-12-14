@@ -21,7 +21,7 @@ type (
 	}
 )
 
-func (i implSNS) New(opts Options) SNS {
+func New(opts Options) SNS {
 	return implSNS{
 		sns: sns.New(opts.Session.GetSession()),
 	}
