@@ -54,16 +54,8 @@ func (i *implClient) decode(response *http.Response, dest interface{}) *Response
 		}
 	}
 	if response.StatusCode < 200 || response.StatusCode > 299 {
-		decodeData := make(map[string]interface{})
+		var decodeData map[string]interface{}
 		if err := json.Unmarshal(bodyBytes, &decodeData); err != nil {
-			return &ResponseFail{
-				Err:        err,
-				StatusCode: response.StatusCode,
-				Header:     response.Header,
-				Body:       bodyBytes,
-			}
-		}
-		if err != nil {
 			return &ResponseFail{
 				Err:        err,
 				StatusCode: response.StatusCode,
