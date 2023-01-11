@@ -2,24 +2,28 @@ package covalent
 
 import (
 	"errors"
-	"net/http"
 	"strings"
 	"time"
 
-	"github.com/rhizomplatform/golib/httpclient"
+	"github.com/rhizomplatform/golib/httphelper"
 	"github.com/rhizomplatform/golib/web3lib/api/web3mod"
+)
+
+const (
+	defaultTimeout = 5 * time.Minute
+	defaultAPIURL  = "https://api.covalenthq.com/v1/"
 )
 
 type (
 	implConvalent struct {
 		apiURL     string
 		apiKey     string
-		httpClient *http.Client
+		httpHelper httphelper.Client
 	}
 	Options struct {
-		ApiURL     string
-		ApiKey     string
-		HttpClient *http.Client
+		APIURL     string
+		APIKey     string
+		HTTPHelper httphelper.Client
 	}
 )
 
@@ -29,38 +33,32 @@ func New(opt Options) (web3mod.Web3, error) {
 		return nil, err
 	}
 	return &implConvalent{
-		apiURL:     opt.ApiURL,
-		apiKey:     opt.ApiKey,
-		httpClient: opt.HttpClient,
+		apiURL: opt.APIURL,
+		apiKey: opt.APIKey,
 	}, nil
 }
 
 func (o *Options) SetDefault() {
-	if o.ApiURL == "" {
-		o.ApiURL = "https://api.covalenthq.com/v1/"
-	} else if !strings.HasSuffix(o.ApiURL, "/") {
-		o.ApiURL = o.ApiURL + "/"
+	if o.APIURL == "" {
+		o.APIURL = defaultAPIURL
+	} else if !strings.HasSuffix(o.APIURL, "/") {
+		o.APIURL = o.APIURL + "/"
 	}
-	if o.HttpClient == nil {
-		header := http.Header{}
-		httpclient.SetAuthBasicToHeader(&header, o.ApiKey, "")
-		httpclient.SetAppJSONToHeader(&header)
-		o.HttpClient = httpclient.New(httpclient.Options{
-			Timeout: 5 * time.Minute, // temporarily timeout
-			Header:  header,
+	if o.HTTPHelper == nil {
+		o.HTTPHelper = httphelper.New(httphelper.Options{
+			BaseURL: o.APIURL,
+			Timeout: defaultTimeout,
 		})
+		o.HTTPHelper.SetAuthBasicToHeader(o.APIKey, "")
 	}
 }
 
 func (o *Options) Validate() error {
-	if o.ApiURL == "" {
+	if o.APIURL == "" {
 		return errors.New("invalid api url")
 	}
-	if o.ApiKey == "" {
+	if o.APIKey == "" {
 		return errors.New("invalid api key")
-	}
-	if o.HttpClient == nil {
-		return errors.New("invalid http client")
 	}
 	return nil
 }

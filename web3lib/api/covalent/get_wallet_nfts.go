@@ -1,9 +1,8 @@
 package covalent
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"io"
 	"strings"
 	"sync"
 
@@ -67,49 +66,25 @@ func (i *implConvalent) getNFTListMetadata(chainID int, nftList web3mod.WalletNF
 }
 
 func (i *implConvalent) getBalanceFromHttp(in web3mod.GetWalletNFTsIn) (*GetBalanceOut, error) {
-	requestURL := fmt.Sprintf("%s%d/address/%s/balances_v2/?nft=true&no-nft-fetch=true", i.apiURL, in.ChainID, in.Wallet)
-	res, err := i.httpClient.Get(requestURL)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
-		return nil, fmt.Errorf(
-			"failed to get balance from %s, status code: %d, body: %s",
-			requestURL, res.StatusCode, string(body),
-		)
-	}
-	balance := &GetBalanceOut{}
-	if err = json.Unmarshal(body, balance); err != nil {
-		return nil, err
+	var (
+		endpoint = fmt.Sprintf("%d/address/%s/balances_v2/?nft=true&no-nft-fetch=true", in.ChainID, in.Wallet)
+		balance  = &GetBalanceOut{}
+		fail     = i.httpHelper.Get(context.Background(), endpoint, nil, balance)
+	)
+	if fail != nil && fail.Err != nil {
+		return nil, fail.Err
 	}
 	return balance, nil
 }
 
 func (i *implConvalent) getExternalMetadataFromHttp(in GetExternalMetadataIn) (*GetExternalMetadataOut, error) {
-	requestURL := fmt.Sprintf("%s%d/tokens/%s/nft_metadata/%s/", i.apiURL, in.ChainID, in.ContractAddress, in.NFTID)
-	res, err := i.httpClient.Get(requestURL)
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
-	body, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
-	if res.StatusCode < 200 || res.StatusCode >= 300 {
-		return nil, fmt.Errorf(
-			"failed to get external metadata from %s, status code: %d, body: %s",
-			requestURL, res.StatusCode, string(body),
-		)
-	}
-	nftMetadata := &GetExternalMetadataOut{}
-	if err = json.Unmarshal(body, nftMetadata); err != nil {
-		return nil, err
+	var (
+		endpoint    = fmt.Sprintf("%d/tokens/%s/nft_metadata/%s/", in.ChainID, in.ContractAddress, in.NFTID)
+		nftMetadata = &GetExternalMetadataOut{}
+		fail        = i.httpHelper.Get(context.Background(), endpoint, nil, nftMetadata)
+	)
+	if fail != nil && fail.Err != nil {
+		return nil, fail.Err
 	}
 	return nftMetadata, nil
 }
