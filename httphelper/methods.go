@@ -53,10 +53,9 @@ func (i *implClient) decode(response *http.Response, dest interface{}) *Response
 			Header:     response.Header,
 		}
 	}
-	decoder := json.NewDecoder(response.Body)
 	if response.StatusCode < 200 || response.StatusCode > 299 {
 		decodeData := make(map[string]interface{})
-		if err := decoder.Decode(&decodeData); err != nil {
+		if err := json.Unmarshal(bodyBytes, &decodeData); err != nil {
 			return &ResponseFail{
 				Err:        err,
 				StatusCode: response.StatusCode,
@@ -80,7 +79,7 @@ func (i *implClient) decode(response *http.Response, dest interface{}) *Response
 		}
 	}
 	if dest != nil {
-		if err := decoder.Decode(dest); err != nil {
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return &ResponseFail{
 				Err:        err,
 				StatusCode: response.StatusCode,
