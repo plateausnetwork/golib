@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/rhizomplatform/golib/httphelper"
 	"github.com/rhizomplatform/golib/logger"
 	"github.com/rhizomplatform/golib/web3lib/api/web3mod"
 )
@@ -67,9 +68,12 @@ func (i *implConvalent) getNFTListMetadata(chainID int, nftList web3mod.WalletNF
 
 func (i *implConvalent) getBalanceFromHttp(in web3mod.GetWalletNFTsIn) (*GetBalanceOut, error) {
 	var (
-		endpoint = fmt.Sprintf("%d/address/%s/balances_v2/?nft=true&no-nft-fetch=true", in.ChainID, in.Wallet)
-		balance  = &GetBalanceOut{}
-		fail     = i.httpHelper.Get(context.Background(), endpoint, nil, balance)
+		balance = &GetBalanceOut{}
+		fail    = i.httpHelper.Get(httphelper.Request{
+			Context:     context.Background(),
+			Endpoint:    fmt.Sprintf("%d/address/%s/balances_v2/?nft=true&no-nft-fetch=true", in.ChainID, in.Wallet),
+			Destination: balance,
+		})
 	)
 	if fail != nil && fail.Err != nil {
 		return nil, fail.Err
@@ -79,9 +83,12 @@ func (i *implConvalent) getBalanceFromHttp(in web3mod.GetWalletNFTsIn) (*GetBala
 
 func (i *implConvalent) getExternalMetadataFromHttp(in GetExternalMetadataIn) (*GetExternalMetadataOut, error) {
 	var (
-		endpoint    = fmt.Sprintf("%d/tokens/%s/nft_metadata/%s/", in.ChainID, in.ContractAddress, in.NFTID)
 		nftMetadata = &GetExternalMetadataOut{}
-		fail        = i.httpHelper.Get(context.Background(), endpoint, nil, nftMetadata)
+		fail        = i.httpHelper.Get(httphelper.Request{
+			Context:     context.Background(),
+			Endpoint:    fmt.Sprintf("%d/tokens/%s/nft_metadata/%s/", in.ChainID, in.ContractAddress, in.NFTID),
+			Destination: nftMetadata,
+		})
 	)
 	if fail != nil && fail.Err != nil {
 		return nil, fail.Err
