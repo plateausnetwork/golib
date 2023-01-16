@@ -24,12 +24,19 @@ type (
 		httpClient *http.Client
 	}
 	Client interface {
-		Get(ctx context.Context, endpoint string, requestBody interface{}, dest interface{}) *ResponseFail
-		Post(ctx context.Context, endpoint string, requestBody interface{}, dest interface{}) *ResponseFail
-		Patch(ctx context.Context, endpoint string, requestBody interface{}, dest interface{}) *ResponseFail
-		Put(ctx context.Context, endpoint string, requestBody interface{}, dest interface{}) *ResponseFail
-		Delete(ctx context.Context, endpoint string, requestBody interface{}, dest interface{}) *ResponseFail
+		Get(request Request) *ResponseFail
+		Post(request Request) *ResponseFail
+		Patch(request Request) *ResponseFail
+		Put(request Request) *ResponseFail
+		Delete(request Request) *ResponseFail
 		SetAuthBasicToHeader(user, password string)
+	}
+	Request struct {
+		Context     context.Context
+		Endpoint    string
+		Header      map[string]string
+		Body        interface{}
+		Destination interface{}
 	}
 	ResponseFail struct {
 		Err        error

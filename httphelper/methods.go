@@ -27,20 +27,27 @@ func getBodyReader(body interface{}) (io.Reader, error) {
 	return bytes.NewReader(bodyBytes), nil
 }
 
-func (i *implClient) do(ctx context.Context, method, endpoint string, requestBody interface{}) (*http.Response, error) {
-	bodyReader, err := getBodyReader(requestBody)
+func (i *implClient) do(method string, request Request) (*http.Response, error) {
+	bodyReader, err := getBodyReader(request.Body)
 	if err != nil {
 		return nil, err
 	}
-	endpoint = strings.TrimPrefix(endpoint, "/")
-	request, err := http.NewRequestWithContext(ctx, method, i.baseURL+endpoint, bodyReader)
+	ctx := request.Context
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	endpoint := strings.TrimPrefix(request.Endpoint, "/")
+	req, err := http.NewRequestWithContext(ctx, method, i.baseURL+endpoint, bodyReader)
 	if err != nil {
 		return nil, err
 	}
 	for key, value := range i.header {
-		request.Header.Set(key, value)
+		req.Header.Set(key, value)
 	}
-	return i.httpClient.Do(request)
+	for key, value := range request.Header {
+		req.Header.Set(key, value)
+	}
+	return i.httpClient.Do(req)
 }
 
 func (i *implClient) decode(response *http.Response, dest interface{}) *ResponseFail {
@@ -83,8 +90,8 @@ func (i *implClient) decode(response *http.Response, dest interface{}) *Response
 	return nil
 }
 
-func (i *implClient) Get(ctx context.Context, endpoint string, requestBody interface{}, dest interface{}) *ResponseFail {
-	response, err := i.do(ctx, http.MethodGet, endpoint, requestBody)
+func (i *implClient) Get(request Request) *ResponseFail {
+	response, err := i.do(http.MethodGet, request)
 	if err != nil {
 		return &ResponseFail{
 			Err:        err,
@@ -92,11 +99,11 @@ func (i *implClient) Get(ctx context.Context, endpoint string, requestBody inter
 			Header:     response.Header,
 		}
 	}
-	return i.decode(response, dest)
+	return i.decode(response, request.Destination)
 }
 
-func (i *implClient) Post(ctx context.Context, endpoint string, requestBody interface{}, dest interface{}) *ResponseFail {
-	response, err := i.do(ctx, http.MethodPost, endpoint, requestBody)
+func (i *implClient) Post(request Request) *ResponseFail {
+	response, err := i.do(http.MethodPost, request)
 	if err != nil {
 		return &ResponseFail{
 			Err:        err,
@@ -104,11 +111,11 @@ func (i *implClient) Post(ctx context.Context, endpoint string, requestBody inte
 			Header:     response.Header,
 		}
 	}
-	return i.decode(response, dest)
+	return i.decode(response, request.Destination)
 }
 
-func (i *implClient) Patch(ctx context.Context, endpoint string, requestBody interface{}, dest interface{}) *ResponseFail {
-	response, err := i.do(ctx, http.MethodPatch, endpoint, requestBody)
+func (i *implClient) Patch(request Request) *ResponseFail {
+	response, err := i.do(http.MethodPatch, request)
 	if err != nil {
 		return &ResponseFail{
 			Err:        err,
@@ -116,11 +123,11 @@ func (i *implClient) Patch(ctx context.Context, endpoint string, requestBody int
 			Header:     response.Header,
 		}
 	}
-	return i.decode(response, dest)
+	return i.decode(response, request.Destination)
 }
 
-func (i *implClient) Put(ctx context.Context, endpoint string, requestBody interface{}, dest interface{}) *ResponseFail {
-	response, err := i.do(ctx, http.MethodPut, endpoint, requestBody)
+func (i *implClient) Put(request Request) *ResponseFail {
+	response, err := i.do(http.MethodPut, request)
 	if err != nil {
 		return &ResponseFail{
 			Err:        err,
@@ -128,11 +135,11 @@ func (i *implClient) Put(ctx context.Context, endpoint string, requestBody inter
 			Header:     response.Header,
 		}
 	}
-	return i.decode(response, dest)
+	return i.decode(response, request.Destination)
 }
 
-func (i *implClient) Delete(ctx context.Context, endpoint string, requestBody interface{}, dest interface{}) *ResponseFail {
-	response, err := i.do(ctx, http.MethodDelete, endpoint, requestBody)
+func (i *implClient) Delete(request Request) *ResponseFail {
+	response, err := i.do(http.MethodDelete, request)
 	if err != nil {
 		return &ResponseFail{
 			Err:        err,
@@ -140,7 +147,7 @@ func (i *implClient) Delete(ctx context.Context, endpoint string, requestBody in
 			Header:     response.Header,
 		}
 	}
-	return i.decode(response, dest)
+	return i.decode(response, request.Destination)
 }
 
 func (i implClient) SetAuthBasicToHeader(user, password string) {
