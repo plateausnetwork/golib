@@ -50,46 +50,6 @@ func (i *implClient) do(method string, request Request) (*http.Response, error) 
 	return i.httpClient.Do(req)
 }
 
-func (i *implClient) Decode(response *http.Response, dest interface{}) *ResponseFail {
-	defer response.Body.Close()
-	bodyBytes, err := io.ReadAll(response.Body)
-	if err != nil {
-		return &ResponseFail{
-			Err:        err,
-			StatusCode: response.StatusCode,
-			Header:     response.Header,
-		}
-	}
-	if response.StatusCode < 200 || response.StatusCode > 299 {
-		var decodeData map[string]interface{}
-		if err := json.Unmarshal(bodyBytes, &decodeData); err != nil {
-			return &ResponseFail{
-				Err:        err,
-				StatusCode: response.StatusCode,
-				Header:     response.Header,
-				Body:       bodyBytes,
-			}
-		}
-		return &ResponseFail{
-			StatusCode: response.StatusCode,
-			Data:       decodeData,
-			Header:     response.Header,
-			Body:       bodyBytes,
-		}
-	}
-	if dest != nil {
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return &ResponseFail{
-				Err:        err,
-				StatusCode: response.StatusCode,
-				Header:     response.Header,
-				Body:       bodyBytes,
-			}
-		}
-	}
-	return nil
-}
-
 func (i *implClient) Get(request Request) *ResponseFail {
 	response, err := i.do(http.MethodGet, request)
 	if err != nil {
@@ -99,7 +59,7 @@ func (i *implClient) Get(request Request) *ResponseFail {
 			Header:     response.Header,
 		}
 	}
-	return i.Decode(response, request.Destination)
+	return DecodeResponse(response, request.Destination)
 }
 
 func (i *implClient) Post(request Request) *ResponseFail {
@@ -111,7 +71,7 @@ func (i *implClient) Post(request Request) *ResponseFail {
 			Header:     response.Header,
 		}
 	}
-	return i.Decode(response, request.Destination)
+	return DecodeResponse(response, request.Destination)
 }
 
 func (i *implClient) Patch(request Request) *ResponseFail {
@@ -123,7 +83,7 @@ func (i *implClient) Patch(request Request) *ResponseFail {
 			Header:     response.Header,
 		}
 	}
-	return i.Decode(response, request.Destination)
+	return DecodeResponse(response, request.Destination)
 }
 
 func (i *implClient) Put(request Request) *ResponseFail {
@@ -135,7 +95,7 @@ func (i *implClient) Put(request Request) *ResponseFail {
 			Header:     response.Header,
 		}
 	}
-	return i.Decode(response, request.Destination)
+	return DecodeResponse(response, request.Destination)
 }
 
 func (i *implClient) Delete(request Request) *ResponseFail {
@@ -147,7 +107,7 @@ func (i *implClient) Delete(request Request) *ResponseFail {
 			Header:     response.Header,
 		}
 	}
-	return i.Decode(response, request.Destination)
+	return DecodeResponse(response, request.Destination)
 }
 
 func (i implClient) SetAuthBasicToHeader(user, password string) {
