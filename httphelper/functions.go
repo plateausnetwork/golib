@@ -27,6 +27,7 @@ func DecodeResponse(response *http.Response, dest interface{}) *ResponseFail {
 			}
 		}
 		return &ResponseFail{
+			Err:        ErrInvalidStatusCode,
 			StatusCode: response.StatusCode,
 			Data:       decodeData,
 			Header:     response.Header,
