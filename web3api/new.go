@@ -3,8 +3,8 @@ package web3lib
 import (
 	"errors"
 
-	"github.com/rhizomplatform/golib/web3lib/api/covalent"
-	"github.com/rhizomplatform/golib/web3lib/api/web3mod"
+	"github.com/rhizomplatform/golib/web3api/covalent"
+	"github.com/rhizomplatform/golib/web3api/web3mod"
 )
 
 const (
