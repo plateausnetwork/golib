@@ -1,4 +1,4 @@
-package web3lib
+package web3api
 
 import (
 	"errors"
