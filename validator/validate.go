@@ -5,14 +5,16 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type Validate interface {
-	Struct(s interface{}) error
-	RegisterValidation(tag string, fn validator.Func, callValidationEvenIfNull ...bool) error
-}
-
-type validateImpl struct {
-	playground *validator.Validate
-}
+type (
+	Validate interface {
+		Struct(s interface{}) error
+		RegisterValidation(tag string, fn validator.Func, callValidationEvenIfNull ...bool) error
+	}
+	StructLevelFunc validator.StructLevelFunc
+	validateImpl    struct {
+		playground *validator.Validate
+	}
+)
 
 func NewValidate() Validate {
 	return &validateImpl{
@@ -26,4 +28,8 @@ func (v *validateImpl) Struct(s interface{}) error {
 
 func (v *validateImpl) RegisterValidation(tag string, fn validator.Func, callValidationEvenIfNull ...bool) error {
 	return v.playground.RegisterValidation(tag, fn, callValidationEvenIfNull...)
+}
+
+func (v *validateImpl) RegisterStructValidation(fn StructLevelFunc, types ...interface{}) {
+	v.playground.RegisterStructValidation(validator.StructLevelFunc(fn), types...)
 }
