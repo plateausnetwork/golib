@@ -33,21 +33,6 @@ func (m *MockSNS) EXPECT() *MockSNSMockRecorder {
 	return m.recorder
 }
 
-// CreateTopic mocks base method.
-func (m *MockSNS) CreateTopic(create CreateTopicInput) (*CreateTopicOutput, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateTopic", create)
-	ret0, _ := ret[0].(*CreateTopicOutput)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateTopic indicates an expected call of CreateTopic.
-func (mr *MockSNSMockRecorder) CreateTopic(create interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTopic", reflect.TypeOf((*MockSNS)(nil).CreateTopic), create)
-}
-
 // Publish mocks base method.
 func (m *MockSNS) Publish(input PublishInput) (*PublishOutput, error) {
 	m.ctrl.T.Helper()
@@ -61,34 +46,4 @@ func (m *MockSNS) Publish(input PublishInput) (*PublishOutput, error) {
 func (mr *MockSNSMockRecorder) Publish(input interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockSNS)(nil).Publish), input)
-}
-
-// Subscribe mocks base method.
-func (m *MockSNS) Subscribe(input *SubscribeInput) (*SubscribeOutput, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Subscribe", input)
-	ret0, _ := ret[0].(*SubscribeOutput)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Subscribe indicates an expected call of Subscribe.
-func (mr *MockSNSMockRecorder) Subscribe(input interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Subscribe", reflect.TypeOf((*MockSNS)(nil).Subscribe), input)
-}
-
-// Unsubscribe mocks base method.
-func (m *MockSNS) Unsubscribe(input *UnsubscribeInput) (*UnsubscribeOutput, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Unsubscribe", input)
-	ret0, _ := ret[0].(*UnsubscribeOutput)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// Unsubscribe indicates an expected call of Unsubscribe.
-func (mr *MockSNSMockRecorder) Unsubscribe(input interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unsubscribe", reflect.TypeOf((*MockSNS)(nil).Unsubscribe), input)
 }

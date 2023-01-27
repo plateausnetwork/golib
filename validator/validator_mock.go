@@ -7,7 +7,7 @@ package validator
 import (
 	reflect "reflect"
 
-	validator "github.com/go-playground/validator/v10"
+	v10 "github.com/go-playground/validator/v10"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -34,8 +34,25 @@ func (m *MockValidate) EXPECT() *MockValidateMockRecorder {
 	return m.recorder
 }
 
+// RegisterStructValidation mocks base method.
+func (m *MockValidate) RegisterStructValidation(fn StructLevelFunc, types ...interface{}) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{fn}
+	for _, a := range types {
+		varargs = append(varargs, a)
+	}
+	m.ctrl.Call(m, "RegisterStructValidation", varargs...)
+}
+
+// RegisterStructValidation indicates an expected call of RegisterStructValidation.
+func (mr *MockValidateMockRecorder) RegisterStructValidation(fn interface{}, types ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{fn}, types...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterStructValidation", reflect.TypeOf((*MockValidate)(nil).RegisterStructValidation), varargs...)
+}
+
 // RegisterValidation mocks base method.
-func (m *MockValidate) RegisterValidation(tag string, fn validator.Func, callValidationEvenIfNull ...bool) error {
+func (m *MockValidate) RegisterValidation(tag string, fn v10.Func, callValidationEvenIfNull ...bool) error {
 	m.ctrl.T.Helper()
 	varargs := []interface{}{tag, fn}
 	for _, a := range callValidationEvenIfNull {
