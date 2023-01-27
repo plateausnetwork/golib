@@ -1,18 +1,16 @@
-package web3lib
+package web3api
 
 import (
 	"errors"
-	"net/http"
 
-	"github.com/rhizomplatform/golib/web3lib/api/covalent"
-	"github.com/rhizomplatform/golib/web3lib/api/web3mod"
+	"github.com/rhizomplatform/golib/web3api/covalent"
+	"github.com/rhizomplatform/golib/web3api/web3mod"
 )
 
 const (
 	ProviderCovalent = "covalent"
 	ConfigAPIKey     = "api_key"
 	ConfigAPIURL     = "api_url"
-	ConfigHTTPClient = "http_client"
 )
 
 type (
@@ -33,14 +31,9 @@ func New(opts Options) (web3mod.Web3, error) {
 		if !ok {
 			apiURL = ""
 		}
-		client, ok := opts.ProviderConfig[ConfigHTTPClient].(*http.Client)
-		if !ok {
-			client = nil
-		}
 		return covalent.New(covalent.Options{
-			ApiKey:     apiKey,
-			ApiURL:     apiURL,
-			HttpClient: client,
+			APIKey: apiKey,
+			APIURL: apiURL,
 		})
 	default:
 		return nil, errors.New("invalid web3 provider type")
