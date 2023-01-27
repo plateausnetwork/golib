@@ -9,6 +9,7 @@ type (
 	Validate interface {
 		Struct(s interface{}) error
 		RegisterValidation(tag string, fn validator.Func, callValidationEvenIfNull ...bool) error
+		RegisterStructValidation(fn StructLevelFunc, types ...interface{})
 	}
 	StructLevelFunc validator.StructLevelFunc
 	validateImpl    struct {
