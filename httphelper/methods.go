@@ -1,34 +1,14 @@
 package httphelper
 
 import (
-	"bytes"
 	"context"
 	"encoding/base64"
-	"encoding/json"
-	"io"
 	"net/http"
 	"strings"
 )
 
-func getBodyReader(body interface{}) (io.Reader, error) {
-	if body == nil {
-		return nil, nil
-	}
-	if bodyReader, ok := body.(strings.Reader); ok {
-		return &bodyReader, nil
-	}
-	if bodyReader, ok := body.(io.Reader); ok {
-		return bodyReader, nil
-	}
-	bodyBytes, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	return bytes.NewReader(bodyBytes), nil
-}
-
 func (i *implClient) do(method string, request Request) (*http.Response, error) {
-	bodyReader, err := getBodyReader(request.Body)
+	bodyReader, err := GetBodyReader(request.Body)
 	if err != nil {
 		return nil, err
 	}
