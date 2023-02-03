@@ -1,7 +1,9 @@
 package apperr
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/rhizomplatform/golib/logger"
@@ -34,7 +36,7 @@ func NewErr(opt Options) *AppErr {
 }
 
 func (appErr AppErr) Error() string {
-	var elements = make([]string, 0, 5)
+	var elements = make([]string, 0, 4)
 	if appErr.HTTPCode > 0 {
 		elements = append(elements, fmt.Sprintf("http: %d", appErr.HTTPCode))
 	}
@@ -48,4 +50,24 @@ func (appErr AppErr) Error() string {
 		elements = append(elements, fmt.Sprintf("msg: %s", appErr.Message))
 	}
 	return strings.Join(elements, ", ")
+}
+
+func GetFromString(str string) (appERR *AppErr) {
+	elements := strings.Split(str, ", ")
+	if len(elements) == 0 {
+		return
+	}
+	for _, element := range elements {
+		switch {
+		case strings.HasPrefix(element, "http: "):
+			appERR.HTTPCode, _ = strconv.Atoi(strings.TrimPrefix(element, "http: "))
+		case strings.HasPrefix(element, "err: "):
+			appERR.Err = errors.New(strings.TrimPrefix(element, "err: "))
+		case strings.HasPrefix(element, "key: "):
+			appERR.Key = strings.TrimPrefix(element, "key: ")
+		case strings.HasPrefix(element, "msg: "):
+			appERR.Message = strings.TrimPrefix(element, "msg: ")
+		}
+	}
+	return
 }
