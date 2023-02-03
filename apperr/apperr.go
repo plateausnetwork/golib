@@ -52,10 +52,13 @@ func (appErr AppErr) Error() string {
 	return strings.Join(elements, ", ")
 }
 
-func GetFromString(str string) (appERR *AppErr) {
-	elements := strings.Split(str, ", ")
+func GetFromString(str string) *AppErr {
+	var (
+		elements = strings.Split(str, ", ")
+		appERR   = &AppErr{}
+	)
 	if len(elements) == 0 {
-		return
+		return nil
 	}
 	for _, element := range elements {
 		switch {
@@ -69,5 +72,5 @@ func GetFromString(str string) (appERR *AppErr) {
 			appERR.Message = strings.TrimPrefix(element, "msg: ")
 		}
 	}
-	return
+	return appERR
 }
