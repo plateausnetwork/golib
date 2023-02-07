@@ -6,6 +6,7 @@ type Crypt interface {
 	NewHashSha256(str string) string
 	PasswordEncrypt(password string) ([]byte, error)
 	PasswordCompare(encryptedPassword, password []byte) error
+	RandomBytes(size int) ([]byte, error)
 }
 
 type cryptImpl struct {
