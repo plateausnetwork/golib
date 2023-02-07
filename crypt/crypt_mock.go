@@ -89,3 +89,18 @@ func (mr *MockCryptMockRecorder) PasswordEncrypt(password interface{}) *gomock.C
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PasswordEncrypt", reflect.TypeOf((*MockCrypt)(nil).PasswordEncrypt), password)
 }
+
+// RandomBytes mocks base method.
+func (m *MockCrypt) RandomBytes(size int) ([]byte, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RandomBytes", size)
+	ret0, _ := ret[0].([]byte)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RandomBytes indicates an expected call of RandomBytes.
+func (mr *MockCryptMockRecorder) RandomBytes(size interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RandomBytes", reflect.TypeOf((*MockCrypt)(nil).RandomBytes), size)
+}
