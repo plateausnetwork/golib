@@ -13,11 +13,6 @@ const (
 	ProviderRedis = "redis"
 )
 
-const (
-	V1 = iota + 1
-	V2
-)
-
 type (
 	Options struct {
 		ProviderType string
