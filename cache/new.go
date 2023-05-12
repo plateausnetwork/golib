@@ -3,6 +3,7 @@ package cache
 
 import (
 	"context"
+	"crypto/tls"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -17,9 +18,11 @@ type (
 		ProviderType string
 		Addr         string
 		Password     string
+		Username     string
 		DB           int
 		Timeout      time.Duration
 		Expiration   time.Duration
+		SkipVerify   bool
 	}
 	Cache interface {
 		Ping(ctx context.Context) error
@@ -35,12 +38,21 @@ func New(opts Options) (Cache, error) {
 		redisOpts := &redis.Options{
 			Addr:        opts.Addr,
 			Password:    opts.Password,
+			Username:    opts.Username,
 			DB:          opts.DB,
 			IdleTimeout: opts.Timeout,
 		}
+
 		if opts.Timeout > 0 {
 			redisOpts.DialTimeout = opts.Timeout
 		}
+
+		if opts.SkipVerify {
+			redisOpts.TLSConfig = &tls.Config{
+				InsecureSkipVerify: true, // Set to false if you want to reject unauthorized connections
+			}
+		}
+
 		implRedis := &implRedis{
 			defaultExpiration: opts.Expiration,
 			client:            redis.NewClient(redisOpts),
